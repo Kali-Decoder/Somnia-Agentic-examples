@@ -1,0 +1,25 @@
+{
+  "name": "somnia-agents-examples",
+  "version": "1.0.0",
+  "description": "Example projects demonstrating Somnia AI Agents integration",
+  "private": true,
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy:oracle": "hardhat run 01-price-oracle/scripts/deploy.ts --network somnia",
+    "invoke:oracle": "hardhat run 01-price-oracle/scripts/invoke.ts --network somnia",
+    "deploy:sentiment": "hardhat run 02-sentiment-analyzer/scripts/deploy.ts --network somnia",
+    "invoke:sentiment": "hardhat run 02-sentiment-analyzer/scripts/invoke.ts --network somnia",
+    "deploy:extractor": "hardhat run 03-web-data-extractor/scripts/deploy.ts --network somnia",
+    "deploy:idea-review": "hardhat run 04-idea-review/scripts/deploy.ts --network somnia",
+    "invoke:extractor": "hardhat run 03-web-data-extractor/scripts/invoke.ts --network somnia",
+    "invoke:idea-review": "hardhat run 04-idea-review/scripts/invoke.ts --network somnia"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "5.0.0",
+    "@nomicfoundation/hardhat-viem": "2.0.6",
+    "hardhat": "^2.28.0",
+    "typescript": "5.8.3",
+    "ts-node": "10.9.2",
+    "dotenv": "16.5.0"
+  }
+}
