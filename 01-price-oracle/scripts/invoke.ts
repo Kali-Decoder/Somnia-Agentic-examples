@@ -2,7 +2,7 @@ import hre from "hardhat";
 import { formatUnits } from "viem";
 
 // ⚠️ Replace with your deployed contract address
-const CONTRACT_ADDRESS = "0x6c82d2bdd88a2e7ed18da19cffaab597fb809e02" as `0x${string}`;
+const CONTRACT_ADDRESS = "0xd3899fe302b149e6130b56d6843e04c22b169adf" as `0x${string}`;
 
 const POLL_INTERVAL = 2000;
 const TIMEOUT = 120_000;
@@ -13,16 +13,33 @@ async function main() {
   const oracle = await hre.viem.getContractAt("PriceOracle", CONTRACT_ADDRESS);
   const publicClient = await hre.viem.getPublicClient();
 
+  const arg = "sol";
+  const coin =
+    arg === "btc" || arg === "bitcoin"
+      ? "btc"
+      : arg === "eth" || arg === "ethereum"
+        ? "eth"
+        : arg === "sol" || arg === "solana"
+          ? "sol"
+          : arg === "somnia" || arg === "stt"
+            ? "somnia"
+            : "btc";
+
   // Step 1: Check required deposit
   const deposit = await oracle.read.getRequiredDeposit();
   console.log(`Required deposit: ${formatUnits(deposit, 18)} STT`);
 
   // Step 2: Request Bitcoin price
-  console.log("\n📡 Requesting BTC price from CoinGecko via agent...");
+  console.log(`\n📡 Requesting ${coin.toUpperCase()} price from CoinGecko via agent...`);
 
-  const hash = await oracle.write.requestBtcPrice({
-    value: deposit,
-  });
+  const hash =
+    coin === "eth"
+      ? await oracle.write.requestEthPrice({ value: deposit })
+      : coin === "sol"
+        ? await oracle.write.requestSolPrice({ value: deposit })
+        : coin === "somnia"
+          ? await oracle.write.requestSomniaPrice({ value: deposit })
+          : await oracle.write.requestBtcPrice({ value: deposit });
   console.log(`Transaction hash: ${hash}`);
 
   // Step 3: Wait for transaction confirmation
@@ -66,7 +83,9 @@ async function main() {
         const decimalPart = price % BigInt(1e8);
         console.log(`✅ Price received!`);
         console.log(`   Request / subscription id: ${event.args.requestId}`);
-        console.log(`   BTC/USD: $${wholePart}.${decimalPart.toString().padStart(8, "0")}`);
+        console.log(
+          `   ${coin.toUpperCase()}/USD: $${wholePart}.${decimalPart.toString().padStart(8, "0")}`
+        );
         console.log(`   Raw value (8 decimals): ${price}`);
       }
       process.exit(0);

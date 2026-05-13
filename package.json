@@ -6,7 +6,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "deploy:oracle": "hardhat run 01-price-oracle/scripts/deploy.ts --network somnia",
-    "invoke:oracle": "hardhat run 01-price-oracle/scripts/invoke.ts --network somnia",
+    "invoke:oracle": "hardhat run 01-price-oracle/scripts/invoke.ts --network somnia --",
     "deploy:sentiment": "hardhat run 02-sentiment-analyzer/scripts/deploy.ts --network somnia",
     "invoke:sentiment": "hardhat run 02-sentiment-analyzer/scripts/invoke.ts --network somnia",
     "deploy:extractor": "hardhat run 03-web-data-extractor/scripts/deploy.ts --network somnia",

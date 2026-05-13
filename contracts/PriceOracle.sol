@@ -27,6 +27,13 @@ contract PriceOracle {
     // Hardcoded platform deposit (0.12 STT, 18 decimals)
     uint256 public constant REQUEST_DEPOSIT = 12e16;
 
+    // CoinGecko IDs (used for URL + selector construction)
+    string public constant COINGECKO_BITCOIN_ID = "bitcoin";
+    string public constant COINGECKO_ETHEREUM_ID = "ethereum";
+    string public constant COINGECKO_SOLANA_ID = "solana";
+    // ⚠️ If CoinGecko uses a different ID for Somnia, update this value accordingly.
+    string public constant COINGECKO_SOMNIA_ID = "somnia";
+
     // ──────────────────────────────────────────────
     // State
     // ──────────────────────────────────────────────
@@ -55,38 +62,48 @@ contract PriceOracle {
     /// @notice Request the current Bitcoin price from CoinGecko
     /// @return requestId The ID to track this request
     function requestBtcPrice() external payable returns (uint256 requestId) {
-        return _requestPrice(
-            "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd",
-            "bitcoin.usd"
-        );
+        return _requestCoinGeckoUsd(COINGECKO_BITCOIN_ID);
     }
 
     /// @notice Request the current Ethereum price from CoinGecko
     /// @return requestId The ID to track this request
     function requestEthPrice() external payable returns (uint256 requestId) {
-        return _requestPrice(
-            "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-            "ethereum.usd"
-        );
+        return _requestCoinGeckoUsd(COINGECKO_ETHEREUM_ID);
+    }
+
+    /// @notice Request the current Solana price from CoinGecko
+    /// @return requestId The ID to track this request
+    function requestSolPrice() external payable returns (uint256 requestId) {
+        return _requestCoinGeckoUsd(COINGECKO_SOLANA_ID);
+    }
+
+    /// @notice Request the current Somnia price from CoinGecko
+    /// @dev Update COINGECKO_SOMNIA_ID if CoinGecko uses a different coinId
+    /// @return requestId The ID to track this request
+    function requestSomniaPrice() external payable returns (uint256 requestId) {
+        return _requestCoinGeckoUsd(COINGECKO_SOMNIA_ID);
     }
 
     /// @notice Request a price from any CoinGecko-supported token
     /// @param coinId The CoinGecko coin ID (e.g., "solana", "cardano")
     /// @return requestId The ID to track this request
     function requestPrice(string calldata coinId) external payable returns (uint256 requestId) {
+        return _requestCoinGeckoUsd(coinId);
+    }
+
+    // ──────────────────────────────────────────────
+    // Internal
+    // ──────────────────────────────────────────────
+
+    function _requestCoinGeckoUsd(string memory coinId) internal returns (uint256 requestId) {
         string memory url = string.concat(
             "https://api.coingecko.com/api/v3/simple/price?ids=",
             coinId,
             "&vs_currencies=usd"
         );
         string memory selector = string.concat(coinId, ".usd");
-
         return _requestPrice(url, selector);
     }
-
-    // ──────────────────────────────────────────────
-    // Internal
-    // ──────────────────────────────────────────────
 
     function _requestPrice(
         string memory url,
