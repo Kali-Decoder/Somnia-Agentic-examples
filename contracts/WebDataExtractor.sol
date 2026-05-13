@@ -25,6 +25,8 @@ contract WebDataExtractor {
         IAgentRequester(0x7407cb35a17D511D1Bd32dD726ADb8D5344ECbE3);
 
     uint256 public constant PARSE_WEBSITE_AGENT_ID = 12875401142070969085;
+    // Hardcoded platform deposit (0.12 STT, 18 decimals)
+    uint256 public constant REQUEST_DEPOSIT = 12e16;
 
     // ──────────────────────────────────────────────
     // State
@@ -85,7 +87,7 @@ contract WebDataExtractor {
             uint8(3)  // numPages: fetch up to 3 pages for context
         );
 
-        uint256 deposit = PLATFORM.getRequestDeposit();
+        uint256 deposit = REQUEST_DEPOSIT;
         require(msg.value >= deposit, "Insufficient deposit");
 
         requestId = PLATFORM.createRequest{value: deposit}(
@@ -137,7 +139,7 @@ contract WebDataExtractor {
             uint8(3)
         );
 
-        uint256 deposit = PLATFORM.getRequestDeposit();
+        uint256 deposit = REQUEST_DEPOSIT;
         require(msg.value >= deposit, "Insufficient deposit");
 
         requestId = PLATFORM.createRequest{value: deposit}(
@@ -182,7 +184,7 @@ contract WebDataExtractor {
             uint8(2)
         );
 
-        uint256 deposit = PLATFORM.getRequestDeposit();
+        uint256 deposit = REQUEST_DEPOSIT;
         require(msg.value >= deposit, "Insufficient deposit");
 
         return PLATFORM.createRequest{value: deposit}(
@@ -243,8 +245,8 @@ contract WebDataExtractor {
         return extractions[requestId];
     }
 
-    function getRequiredDeposit() external view returns (uint256) {
-        return PLATFORM.getRequestDeposit();
+    function getRequiredDeposit() external pure returns (uint256) {
+        return REQUEST_DEPOSIT;
     }
 
     receive() external payable {}

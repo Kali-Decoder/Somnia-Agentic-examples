@@ -8,6 +8,8 @@ contract DAOProposalFilter {
         IAgentRequester(0x037Bb9C718F3f7fe5eCBDB0b600D607b52706776);
 
     uint256 public constant LLM_AGENT_ID = 12847293847561029384; // from explorer
+    // Hardcoded platform deposit (0.12 STT, 18 decimals)
+    uint256 public constant REQUEST_DEPOSIT = 12e16;
 
     mapping(uint256 => bool) public pendingRequests;
     mapping(uint256 => string) public results;
@@ -43,7 +45,7 @@ contract DAOProposalFilter {
             allowedValues
         );
 
-        uint256 deposit = PLATFORM.getRequestDeposit();
+        uint256 deposit = REQUEST_DEPOSIT;
         require(msg.value >= deposit, "Insufficient deposit");
 
         requestId = PLATFORM.createRequest{value: deposit}(
@@ -86,8 +88,8 @@ contract DAOProposalFilter {
         emit ProposalEvaluated(requestId, result);
     }
 
-    function getRequiredDeposit() external view returns (uint256) {
-        return PLATFORM.getRequestDeposit();
+    function getRequiredDeposit() external pure returns (uint256) {
+        return REQUEST_DEPOSIT;
     }
 
     receive() external payable {}

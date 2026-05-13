@@ -9,6 +9,8 @@ contract IdeaReview {
 
     uint256 public constant LLM_AGENT_ID = 12847293847561029384;
     uint256 public constant SUBCOMMITTEE_SIZE = 3;
+    // Hardcoded platform deposit (0.12 STT, 18 decimals)
+    uint256 public constant REQUEST_DEPOSIT = 12e16;
 
     struct Review {
         string idea;
@@ -46,7 +48,7 @@ contract IdeaReview {
             noConstraints
         );
 
-        uint256 deposit = PLATFORM.getAdvancedRequestDeposit(SUBCOMMITTEE_SIZE);
+        uint256 deposit = REQUEST_DEPOSIT;
         require(msg.value >= deposit, "Insufficient deposit");
 
         requestId = PLATFORM.createRequest{value: deposit}(
@@ -112,8 +114,8 @@ contract IdeaReview {
         return reviews[requestId].completed;
     }
 
-    function getRequiredDeposit() external view returns (uint256) {
-        return PLATFORM.getAdvancedRequestDeposit(SUBCOMMITTEE_SIZE);
+    function getRequiredDeposit() external pure returns (uint256) {
+        return REQUEST_DEPOSIT;
     }
 
     receive() external payable {}

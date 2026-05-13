@@ -25,6 +25,8 @@ contract SentimentAnalyzer {
         IAgentRequester(0x037Bb9C718F3f7fe5eCBDB0b600D607b52706776);
 
     uint256 public constant LLM_AGENT_ID = 12847293847561029384;
+    // Hardcoded platform deposit (0.12 STT, 18 decimals)
+    uint256 public constant REQUEST_DEPOSIT = 12e16;
 
     // ──────────────────────────────────────────────
     // State
@@ -89,7 +91,7 @@ contract SentimentAnalyzer {
             allowedValues    // constrain to bullish/bearish/neutral
         );
 
-        uint256 deposit = PLATFORM.getRequestDeposit();
+        uint256 deposit = REQUEST_DEPOSIT;
         require(msg.value >= deposit, "Insufficient deposit");
 
         requestId = PLATFORM.createRequest{value: deposit}(
@@ -135,7 +137,7 @@ contract SentimentAnalyzer {
             false         // chainOfThought
         );
 
-        uint256 deposit = PLATFORM.getRequestDeposit();
+        uint256 deposit = REQUEST_DEPOSIT;
         require(msg.value >= deposit, "Insufficient deposit");
 
         requestId = PLATFORM.createRequest{value: deposit}(
@@ -211,8 +213,8 @@ contract SentimentAnalyzer {
         return analyses[requestId];
     }
 
-    function getRequiredDeposit() external view returns (uint256) {
-        return PLATFORM.getRequestDeposit();
+    function getRequiredDeposit() external pure returns (uint256) {
+        return REQUEST_DEPOSIT;
     }
 
     receive() external payable {}

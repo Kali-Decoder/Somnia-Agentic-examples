@@ -21,9 +21,11 @@ contract PriceOracle {
     // ──────────────────────────────────────────────
 
     IAgentRequester public constant PLATFORM =
-        IAgentRequester(0x7407cb35a17D511D1Bd32dD726ADb8D5344ECbE3);
+        IAgentRequester(0x037Bb9C718F3f7fe5eCBDB0b600D607b52706776);
 
     uint256 public constant JSON_API_AGENT_ID = 13174292974160097713;
+    // Hardcoded platform deposit (0.12 STT, 18 decimals)
+    uint256 public constant REQUEST_DEPOSIT = 12e16;
 
     // ──────────────────────────────────────────────
     // State
@@ -99,8 +101,8 @@ contract PriceOracle {
             uint8(8) // 8 decimal places (like most price feeds)
         );
 
-        // Step 2: Get the required deposit and send the request
-        uint256 deposit = PLATFORM.getRequestDeposit();
+        // Step 2: Use the required deposit and send the request
+        uint256 deposit = REQUEST_DEPOSIT;
         require(msg.value >= deposit, "Insufficient deposit");
 
         requestId = PLATFORM.createRequest{value: deposit}(
@@ -160,8 +162,8 @@ contract PriceOracle {
     }
 
     /// @notice Check how much deposit is needed to make a request
-    function getRequiredDeposit() external view returns (uint256) {
-        return PLATFORM.getRequestDeposit();
+    function getRequiredDeposit() external pure returns (uint256) {
+        return REQUEST_DEPOSIT;
     }
 
     // Accept rebates from the platform
